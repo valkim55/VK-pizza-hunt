@@ -51,6 +51,20 @@ const handlePizzaSubmit = event => {
   }
 
   const formData = { pizzaName, createdBy, size, toppings };
+  
+  // make a fetch request to the /api/pizzas endpoint to send the client's input data to the server and save it into the database
+  fetch('/api/pizzas', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+  }).then(response => response.json())
+    .then(postResponse => {
+        alert('Pizza created successfully!');
+        console.log(postResponse);
+    }).catch(err => {
+        console.log(err);
+    });
+    
 };
 
 $pizzaForm.addEventListener('submit', handlePizzaSubmit);

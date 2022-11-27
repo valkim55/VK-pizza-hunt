@@ -7,8 +7,8 @@ const ReplySchema = new Schema(
         // imported Types to use ObjectId() value to generate if for a reply
         // adding custom field
         replyId: { type: Schema.Types.ObjectId, default: () => new Types.ObjectId() },
-        replyBody: { type: String },
-        writtenBy: { type: String },
+        replyBody: { type: String, required: true, trim: true },
+        writtenBy: { type: String, required: true, trim: true },
         createdAt: { type: Date, default: Date.now, get: createdAtVal => dateFormat(createdAtVal) }
     },
     {
@@ -19,8 +19,8 @@ const ReplySchema = new Schema(
 
 const CommentSchema = new Schema(
     {
-        writtenBy: {type: String},
-        commentBody: {type: String},
+        writtenBy: {type: String, required: true, trim: true },
+        commentBody: {type: String, required: true, trim: true },
         createdAt: { type: Date, default: Date.now, get: createdAtVal => dateFormat(createdAtVal) },
         replies: [ReplySchema]
     },

@@ -12,7 +12,7 @@ const commentController = {
                 return Pizza.findOneAndUpdate(
                     { _id: params.pizzaId},
                     { $addToSet: {comments: _id} },
-                    { new: true}
+                    { new: true, runValidators: true}
                 );
             }).then(dbPizzaData => {
                 if (!dbPizzaData) {
@@ -20,7 +20,7 @@ const commentController = {
                     return;
                 }
                 res.json(dbPizzaData);
-            }).catch(err => res.jon(err));
+            }).catch(err => res.json(err));
     },
 
     // add a reply to an existing comment
@@ -28,7 +28,7 @@ const commentController = {
         Comment.findOneAndUpdate(
             { _id: params.commentId },
             { $addToSet: { replies: body } },
-            { new: true }
+            { new: true, runValidators: true }
         ).then(dbPizzaData => {
             if(!dbPizzaData) {
                 res.status(404).json({message: 'No pizza found with this id'});

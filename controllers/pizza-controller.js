@@ -50,7 +50,7 @@ const pizzaController = {
     // ===== UPDATE a pizza - callback function for PUT /api/pizzas/:id
     updatePizza({params, body}, res) {
         // three parameters below have to be exactly in this order! that's how it is with mongoose
-        Pizza.findOneAndUpdate({ _id: params.id }, body, {new: true}) // set the third parameter new:true so Mongoose will return an updated document in the response
+        Pizza.findOneAndUpdate({ _id: params.id }, body, {new: true, runValidators: true }) // set the third parameter new:true so Mongoose will return an updated document in the response
                 .then(dbPizzaData => {
                     if (!dbPizzaData) {
                         res.status(404).json({message: 'no pizza found with this id'});

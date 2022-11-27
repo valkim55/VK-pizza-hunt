@@ -6,6 +6,13 @@ const pizzaController = {
     // ===== GET ALL pizzas - will serve as a callback function for GET /api/pizzas route
     getAllPizza(req, res) {
         Pizza.find({})
+            .populate( 
+                {
+                    path: 'comments',
+                    select: '-__v'
+                })
+            .select('-__v')
+            .sort( { __id: -1 } )
             .then(dbPizzaData  => res.json(dbPizzaData))
             .catch(err => {
                 res.status(400).json(err);
@@ -16,6 +23,11 @@ const pizzaController = {
     // ===== GET ONE pizza by id - will server as a callback function for GET /api/pizzas/:id
     getPizzaById({params}, res) { // instead of accessing the entire req, you destructured and pulled params out of it because that's all you need for this request
         Pizza.findOne({ _id: params.id })
+            .populate( {
+                path: 'comments',
+                select: '-__v'
+            } )
+            .select('-__v')
             .then(dbPizzaData => {
                 if(!dbPizzaData) {
                     res.status(400).json({message: 'no pizza found with this id'});

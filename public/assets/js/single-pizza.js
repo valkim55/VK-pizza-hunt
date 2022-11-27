@@ -9,6 +9,32 @@ const $newCommentForm = document.querySelector('#new-comment-form');
 
 let pizzaId;
 
+// setup a front end fetch request to the /api/pizzas/pizzaId api endpoint to display info on a selected pizza and its comments, most importantly
+function getPizza() {
+    // get pizzaId
+    const searchParams = new URLSearchParams(document.location.search.substring(1));
+    const pizzaId = searchParams.get('id');
+
+    // get pizzaInfo
+    fetch(`/api/pizzas/${pizzaId}`)
+        .then(response => {
+            // check for errors
+            if(!response.ok) {
+                throw new Error({message: 'something went wrong'});
+            }
+            //console.log(response);
+            return response.json();
+        })
+        .then(printPizza)
+        .catch(err => {
+            console.log(err);
+            alert('cannot find a pizza with this id! taking you to the previous page');
+            // window history API lets you control the state of the browser's session, behaves as if clicked 'back' button
+            window.history.back();
+        })
+
+}
+
 function printPizza(pizzaData) {
   console.log(pizzaData);
 
@@ -87,6 +113,26 @@ function handleNewCommentSubmit(event) {
   }
 
   const formData = { commentBody, writtenBy };
+
+  // make a fetch request to /api/comments/pizzaId/ endpoint to POST a new comment
+  fetch(`/api/comments/${pizzaId}`, {
+    method: 'POST',
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  }).then(response => {
+    if(!response.ok) {
+        throw new Error('something went wrong');
+    }
+    response.json();
+  }).then(commentResponse => {
+    console.log(commentResponse);
+    location.reload();
+  }).catch(err => {
+    console.log(err);
+  });
 }
 
 function handleNewReplySubmit(event) {
@@ -106,7 +152,29 @@ function handleNewReplySubmit(event) {
   }
 
   const formData = { writtenBy, replyBody };
+
+  // make a fetch PUT request to update a comment document by adding a new reply subdocument to nested replies array
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'PUT',
+    headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  }).then(response => {
+    if(!response.ok) {
+        throw new Error('something went wrong');
+    }
+    response.json();
+  }).then(commentResponse => {
+    console.log(commentResponse);
+    location.reload();
+  }).catch(err => {
+    console.log(err);
+  })
+
 }
+
 
 $backBtn.addEventListener('click', function() {
   window.history.back();
@@ -114,3 +182,6 @@ $backBtn.addEventListener('click', function() {
 
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
+
+
+getPizza();

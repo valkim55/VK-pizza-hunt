@@ -1,10 +1,21 @@
 const router = require('express').Router();
 
 // import the methods and models
-const { addComment, removeComment } = require('../../controllers/comment-controller');
+const { addComment, removeComment, addReply, removeReply } = require('../../controllers/comment-controller');
 
-router.route('/:pizzaId').post(addComment);
+//since the callback function of a route() method has req and res as parameters, you don't need to pass these arguments to controller methods
+router
+    .route('/:pizzaId')
+    .post(addComment);
 
-router.route('/:pizzaId/:commentId').delete(removeComment);
+router
+    .route('/:pizzaId/:commentId')
+    .put(addReply)
+    .delete(removeComment);
+
+router
+    .route('/:pizzaId/:commentId/:replyId')
+    .delete(removeReply);
+
 
 module.exports = router;
